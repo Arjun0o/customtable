@@ -1,9 +1,8 @@
 // @flow
 import React from "react";
-import Table from "../components/Table";
-
+import RightArrow from "../components/svg-icons/right-arrow";
 function App() {
-  return <Table />;
+  return <RightArrow />;
 }
 
 export default App;
