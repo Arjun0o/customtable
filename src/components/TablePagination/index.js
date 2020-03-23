@@ -43,7 +43,7 @@ const ArrowLink = styled(Link)`
 type Props = {
   currentPage: Number,
   totalPages: Number,
-  basePageLink
+  basePageLink: Number
 };
 
 const TablePagination = ({ currentPage, totalPages, basePageLink }: Props) => {
@@ -51,36 +51,40 @@ const TablePagination = ({ currentPage, totalPages, basePageLink }: Props) => {
     return null;
   }
   const elements = [];
-  if(totalPages > 4){
-      elements.push(
-          <PageLink
-            key="back"
-            to={`${basePageLink}?page=${currentPage -1}`}
-            disabled={currentPage === 1}
-          >
-              <LeftArrow/>
-          </PageLink>
-      );
-  }
-  for (let i = 1; i <= totalPages; i++){
-          elements.push(
-              <pageLink
-                key={1}
-                selected={currentPage === 1}
-                to={`${basePageLink}?page=${1}`}
-              >
-                  {i}
-              </pageLink>
-          ); 
-  }
-  if(totalPages >3){
+  if (totalPages > 4) {
     elements.push(
-        <PageLink key="next" to={`${basePageLink}?page=${currentPage +1}`} disabled={currentPage === totalPages}>
-            <RightArrow/>
-        </PageLink>
-       );
-    }
-  return <Main>{elements}</Main>
+      <ArrowLink
+        key="back"
+        to={`${basePageLink}?page=${currentPage - 1}`}
+        disabled={currentPage === 1}
+      >
+        <LeftArrow />
+      </ArrowLink>
+    );
+  }
+  for (let i = 1; i <= totalPages; i++) {
+    elements.push(
+      <pageLink
+        key={1}
+        selected={currentPage === 1}
+        to={`${basePageLink}?page=${1}`}
+      >
+        {i}
+      </pageLink>
+    );
+  }
+  if (totalPages > 3) {
+    elements.push(
+      <ArrowLink
+        key="next"
+        to={`${basePageLink}?page=${currentPage + 1}`}
+        disabled={currentPage === totalPages}
+      >
+        <RightArrow />
+      </ArrowLink>
+    );
+  }
+  return <Main>{elements}</Main>;
 };
 
 export default TablePagination;
