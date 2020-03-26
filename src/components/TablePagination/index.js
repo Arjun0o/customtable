@@ -9,7 +9,7 @@ import LeftArrow from "../svg-icons/left-arrow";
 const Main = styled.div`
   display: flex;
   margin-top: 25px;
-  justify-content: space-around;
+  justify-content: space-between;
   align-items: center;
 `;
 
@@ -18,10 +18,12 @@ const PageLink = styled(Link)`
   width: 30px;
   text-align: center;
   line-height: 30px;
-  font-size: 16px;
   margin: 0 4px;
   text-decoration: underline;
-  ${props => (props.selected ? `color:#20b2aa` : `color:#000000`)};
+  font: Regular 13px/16px Lato;
+  letter-spacing: 0.13px;
+  opacity: 1;
+  ${props => (props.selected ? `color:#000000` : `color:#bcbcbc`)};
 `;
 
 const ArrowLink = styled(Link)`
@@ -40,6 +42,16 @@ const ArrowLink = styled(Link)`
   `};
 `;
 
+const PaginationInfo = styled.p`
+  color: #676767;
+  font: Regular 13px/16px Lato;
+  letter-spacing: 0.91px;
+`;
+
+const HighlightedText = styled.span`
+  color: #000000;
+`;
+
 type Props = {
   currentPage: Number,
   totalPages: Number,
@@ -51,7 +63,7 @@ const TablePagination = ({ currentPage, totalPages, basePageLink }: Props) => {
     return null;
   }
   const elements = [];
-  if (totalPages > 4) {
+  if (currentPage > 5) {
     elements.push(
       <ArrowLink
         key="back"
@@ -62,15 +74,15 @@ const TablePagination = ({ currentPage, totalPages, basePageLink }: Props) => {
       </ArrowLink>
     );
   }
-  for (let i = 1; i <= totalPages; i++) {
+  for (let i = 1; i <= totalPages / 2; i++) {
     elements.push(
-      <pageLink
-        key={1}
+      <PageLink
+        key={i}
         selected={currentPage === 1}
         to={`${basePageLink}?page=${1}`}
       >
         {i}
-      </pageLink>
+      </PageLink>
     );
   }
   if (totalPages > 3) {
@@ -84,7 +96,16 @@ const TablePagination = ({ currentPage, totalPages, basePageLink }: Props) => {
       </ArrowLink>
     );
   }
-  return <Main>{elements}</Main>;
+  return (
+    <Main>
+      <PaginationInfo>
+        Showing <HighlightedText>{currentPage}</HighlightedText> of{" "}
+        <HighlightedText>6</HighlightedText> of{" "}
+        <HighlightedText>{totalPages}</HighlightedText> entries
+      </PaginationInfo>
+      <div style={{ display: "flex" }}>{elements}</div>
+    </Main>
+  );
 };
 
 export default TablePagination;

@@ -1,5 +1,4 @@
 // @flow
-
 import React from "react";
 import styled, { css } from "styled-components";
 import TablePagination from "../TablePagination";
@@ -32,36 +31,102 @@ const Main = styled.div`
   flex-direction: column;
 `;
 
-const T = styled.table`
+const StyledTable = styled.table`
   width: 100%;
   border-collapse: collapse;
-
-  tbody:before {
-    content: "-";
-    display: block;
-    line-height: 0.6em;
-    color: transparent;
-  }
+  background: #ffffff 0% 0% no-repeat padding-box;
+  box-shadow: 0px 13px 16px #e4e5e629;
+  border: 1px solid #e4ecf4;
+  border-radius: 10px;
+  opacity: 1;
 `;
 
-const Th = styled.th`
+const StyledHeaderCell = styled.th`
   text-align: ${props => (props.align ? props.align : "left")};
-  font-size: 18px;
-  font-weight: 700;
-  opacity: 0.65;
+  font: 18px Lato;
+  letter-spacing: 0.75px;
+  color: #6e8188;
+  text-transform: uppercase;
+  opacity: 1;
+  padding: 1rem 2rem 1rem 2rem;
+  border-bottom: 1px solid #e4ecf4;
+  border-radius: 10px 10px 0px 0px;
+  opacity: 1;
   ${props => props.css && css(...props.css)};
 `;
 
-const Td = styled.td`
+const StyledCell = styled.td`
   text-align: ${props => (props.align ? props.align : "left")};
   ${props => props.css && css(...props.css)};
+  padding: 0 2rem;
+  font: Medium 17px;
+  letter-spacing: 0.85px;
+  color: #1c1e29;
+  opacity: 1;
 `;
 
-const Tr = styled.tr`
-  border-bottom: 2px solid #000000;
+const StyledRow = styled.tr`
+  border-bottom: 1px solid #e4ecf4;
   ${props => props.css && css(...props.css)};
 `;
 
+function TableColumns({ columns }) {
+  return (
+    <tr>
+      {Object.keys(columns).map(key => (
+        <StyledHeaderCell
+          key={key}
+          align={columns[key].align}
+          width={columns[key].width}
+          css={columns[key].cssHeader}
+        >
+          {columns[key].label ? columns[key].label : ""}
+        </StyledHeaderCell>
+      ))}
+    </tr>
+  );
+}
+function Cell({ align, width, css, content }) {
+  return (
+    <StyledCell align={align} width={width} css={css}>
+      {content}
+    </StyledCell>
+  );
+}
+function Row({ item, onClick, css, columns }) {
+  return (
+    <StyledRow
+      css={css}
+      onClick={onClick ? (e: Event) => onClick(e, item) : null}
+    >
+      {Object.keys(columns).map(key => (
+        <Cell
+          key={key}
+          css={columns[key].css}
+          align={columns[key].align}
+          content={
+            columns[key].content ? columns[key].content(item) : item[key]
+          }
+        />
+      ))}
+    </StyledRow>
+  );
+}
+function Body({ data, rowKeyFiled, onRowClick, rowCss, columns }) {
+  return (
+    <tbody>
+      {data.map(row => (
+        <Row
+          item={row}
+          key={row[rowKeyFiled]}
+          onClick={onRowClick}
+          css={rowCss}
+          columns={columns}
+        />
+      ))}
+    </tbody>
+  );
+}
 const Table = ({
   columns,
   data = [],
@@ -70,45 +135,20 @@ const Table = ({
   totalPages,
   basePageLink
 }: Props) => {
-  const headerColumns = () =>
-    Object.keys(columns).map(key => (
-      <Th
-        key={key}
-        align={columns[key].align}
-        width={columns[key].width}
-        css={columns[key].cssHeader}
-      >
-        {columns[key].label ? columns[key].label : ""}
-      </Th>
-    ));
-
-  const cell = (key, item) => (
-    <Td
-      key={key}
-      align={columns[key].align}
-      width={columns[key].width}
-      css={columns[key].css}
-    >
-      {columns[key].content ? columns[key].content(item) : item[key]}
-    </Td>
-  );
-  const row = (item: Object) => (
-    <Tr
-      key={item[uniqueKey]}
-      css={css}
-      onClick={onClick ? (e: Event) => onClick(e, item) : null}
-    >
-      {Object.keys(columns).map(key => cell(key, item))}
-    </Tr>
-  );
   return (
     <Main>
-      <T>
+      <StyledTable>
         <thead>
-          <tr>{headerColumns()}</tr>
+          <TableColumns columns={columns} />
         </thead>
-        <tbody>{data.map(i => row(i))}</tbody>
-      </T>
+        <Body
+          columns={columns}
+          data={data}
+          rowKeyFiled={uniqueKey}
+          onRowClick={onClick}
+          rowCss={css}
+        />
+      </StyledTable>
       <TablePagination
         currentPage={currentPage}
         totalPages={totalPages}
@@ -117,5 +157,4 @@ const Table = ({
     </Main>
   );
 };
-
 export default Table;
